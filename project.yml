@@ -1,0 +1,82 @@
+name: Commentator
+options:
+  bundleIdPrefix: mit.shenshen.commentator
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""
+    SWIFT_VERSION: "5.10"
+    GENERATE_INFOPLIST_FILE: NO
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: "0.1"
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  Commentator:
+    type: application
+    platform: iOS
+    sources:
+      - path: Shared
+      - path: iOS
+        excludes:
+          - "Resources/Info.plist"
+    resources:
+      - path: iOS/Resources
+        excludes:
+          - "Info.plist"
+    info:
+      path: iOS/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Commentator
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities:
+          - armv7
+        UIApplicationSupportsIndirectInputEvents: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSMicrophoneUsageDescription: "Used to capture spoken comments during lectures."
+        NSSpeechRecognitionUsageDescription: "Used to transcribe your spoken comments."
+        WKCompanionAppBundleIdentifier: mit.shenshen.commentator.watchkitapp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mit.shenshen.commentator
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: NO
+        ENABLE_PREVIEWS: YES
+    dependencies:
+      - target: CommentatorWatch
+        embed: true
+        codeSign: true
+
+  CommentatorWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Shared
+      - path: Watch
+        excludes:
+          - "Resources/Info.plist"
+    resources:
+      - path: Watch/Resources
+        excludes:
+          - "Info.plist"
+    info:
+      path: Watch/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Commentator
+        WKApplication: true
+        WKWatchOnly: false
+        WKRunsIndependentlyOfCompanionApp: false
+        NSMicrophoneUsageDescription: "Used to capture spoken comments during lectures."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mit.shenshen.commentator.watchkitapp
+        TARGETED_DEVICE_FAMILY: "4"
+        WATCHOS_DEPLOYMENT_TARGET: "10.0"
+        SDKROOT: watchos
+        SUPPORTED_PLATFORMS: "watchos watchsimulator"
