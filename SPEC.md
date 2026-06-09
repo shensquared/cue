@@ -110,10 +110,14 @@ Keep audio, transcript, or both — see "Decisions to lock," item 1.
    dense lectures; cost is ~3s of replay per comment.
 6. **Storage** — *Local JSON on phone + audio clips on disk* (one annotations JSON per
    lecture, clips in a per-lecture folder). Export as `mm:ss → transcript` CSV later.
-7. **Watch wake model** — *Raise-wrist + tap.* No `WKExtendedRuntimeSession`. Watch app
-   suspends when screen off; user raises wrist to wake, then taps to mark. Keeps power
-   use low and avoids App-Store-hostile background tricks. Implication: trigger latency
-   = wrist-raise → app-resume (~1s) before tap registers.
+7. **Watch wake model** — *Raise-wrist + tap.* No persistent `WKExtendedRuntimeSession`
+   across the whole lecture. Watch app suspends when screen off; user raises wrist to
+   wake, then taps to mark. Keeps power use low. Implication: trigger latency =
+   wrist-raise → app-resume (~1s) before tap registers.
+   *Narrow exception:* a short `WKExtendedRuntimeSession` is started for the duration of
+   the active recording only (between the start and stop taps), so the user can drop
+   their wrist mid-comment without truncating the clip. The session is invalidated as
+   soon as `stop()` is called.
 
 ---
 
