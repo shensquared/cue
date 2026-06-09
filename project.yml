@@ -9,7 +9,7 @@ options:
 
 settings:
   base:
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: AXMJNVS49X
     SWIFT_VERSION: "5.10"
     GENERATE_INFOPLIST_FILE: NO
     CURRENT_PROJECT_VERSION: 1
@@ -41,7 +41,6 @@ targets:
           - UIInterfaceOrientationPortrait
         NSMicrophoneUsageDescription: "Used to capture spoken comments during lectures."
         NSSpeechRecognitionUsageDescription: "Used to transcribe your spoken comments."
-        WKCompanionAppBundleIdentifier: mit.shenshen.cue.watchkitapp
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mit.shenshen.cue
@@ -72,6 +71,7 @@ targets:
         WKApplication: true
         WKWatchOnly: false
         WKRunsIndependentlyOfCompanionApp: false
+        WKCompanionAppBundleIdentifier: mit.shenshen.cue
         NSMicrophoneUsageDescription: "Used to capture spoken comments during lectures."
     settings:
       base:
