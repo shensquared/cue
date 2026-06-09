@@ -63,7 +63,7 @@ final class WCWatchSession: NSObject, WCSessionDelegate {
             MessageKey.kind: MessageKind.endComment.rawValue,
             MessageKey.annotationID: annotationID.uuidString
         ]
-        if let transcript { msg["transcript"] = transcript }
+        if let transcript { msg[MessageKey.transcript] = transcript }
         if session.isReachable {
             session.sendMessage(msg, replyHandler: nil, errorHandler: nil)
         } else {

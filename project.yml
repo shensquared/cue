@@ -3,7 +3,7 @@ options:
   bundleIdPrefix: mit.shenshen.cue
   deploymentTarget:
     iOS: "17.0"
-    watchOS: "10.0"
+    watchOS: "11.0"
   createIntermediateGroups: true
   groupSortPosition: top
 
@@ -45,7 +45,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mit.shenshen.cue
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: NO
         ENABLE_PREVIEWS: YES
     dependencies:
@@ -77,6 +77,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mit.shenshen.cue.watchkitapp
         TARGETED_DEVICE_FAMILY: "4"
-        WATCHOS_DEPLOYMENT_TARGET: "10.0"
+        WATCHOS_DEPLOYMENT_TARGET: "11.0"
         SDKROOT: watchos
         SUPPORTED_PLATFORMS: "watchos watchsimulator"

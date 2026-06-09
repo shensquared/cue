@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     @EnvironmentObject private var coordinator: PhoneCoordinator
     @State private var showImporter = false
+    @State private var csvURL: URL?
 
     var body: some View {
         NavigationStack {
@@ -29,19 +30,17 @@ struct ContentView: View {
                         Image(systemName: "plus")
                     }
                 }
-                if coordinator.lectureID != nil {
+                if coordinator.lectureID != nil, let csvURL {
                     ToolbarItem(placement: .topBarLeading) {
-                        if let csv = coordinator.exportCSVURL() {
-                            ShareLink(item: csv) {
-                                Image(systemName: "square.and.arrow.up")
-                            }
+                        ShareLink(item: csvURL) {
+                            Image(systemName: "square.and.arrow.up")
                         }
                     }
                 }
             }
             .fileImporter(
                 isPresented: $showImporter,
-                allowedContentTypes: [.audio, .mpeg4Audio, UTType("public.mp3") ?? .audio],
+                allowedContentTypes: [.audio],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
@@ -51,7 +50,18 @@ struct ContentView: View {
                     coordinator.lastError = "import canceled: \(error.localizedDescription)"
                 }
             }
+            .onChange(of: coordinator.lectureID) { _, _ in
+                refreshCSV()
+            }
+            .onChange(of: coordinator.annotations.count) { _, _ in
+                refreshCSV()
+            }
+            .onAppear { refreshCSV() }
         }
+    }
+
+    private func refreshCSV() {
+        csvURL = coordinator.exportCSVURL()
     }
 
     private var lecturesSection: some View {

@@ -4,7 +4,6 @@ import WatchConnectivity
 final class WCPhoneSession: NSObject, WCSessionDelegate {
     private weak var coordinator: PhoneCoordinator?
     private let session = WCSession.default
-    private var pendingAnnotationID: UUID?
 
     init(coordinator: PhoneCoordinator) {
         self.coordinator = coordinator
@@ -19,7 +18,12 @@ final class WCPhoneSession: NSObject, WCSessionDelegate {
 
     // MARK: - WCSessionDelegate
 
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        guard let error else { return }
+        Task { @MainActor in
+            coordinator?.lastError = "WCSession activation: \(error.localizedDescription)"
+        }
+    }
 
     func sessionDidBecomeInactive(_ session: WCSession) {}
     func sessionDidDeactivate(_ session: WCSession) { session.activate() }
@@ -35,7 +39,6 @@ final class WCPhoneSession: NSObject, WCSessionDelegate {
             switch kind {
             case .startComment:
                 let id = UUID()
-                pendingAnnotationID = id
                 if let t = coordinator?.handleStartComment() {
                     replyHandler([
                         MessageKey.kind: MessageKind.ack.rawValue,
@@ -47,16 +50,21 @@ final class WCPhoneSession: NSObject, WCSessionDelegate {
                 }
 
             case .endComment:
-                let transcript = message["transcript"] as? String
-                let idString = message[MessageKey.annotationID] as? String
-                let id = idString.flatMap(UUID.init(uuidString:)) ?? pendingAnnotationID ?? UUID()
-                coordinator?.handleEndComment(annotationID: id, transcript: transcript)
-                pendingAnnotationID = nil
+                applyEndComment(payload: message)
                 replyHandler([MessageKey.kind: MessageKind.resumed.rawValue])
 
             default:
                 replyHandler([MessageKey.error: "unsupported kind"])
             }
+        }
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        guard let kindRaw = userInfo[MessageKey.kind] as? String,
+              let kind = MessageKind(rawValue: kindRaw),
+              kind == .endComment else { return }
+        Task { @MainActor in
+            applyEndComment(payload: userInfo)
         }
     }
 
@@ -71,5 +79,13 @@ final class WCPhoneSession: NSObject, WCSessionDelegate {
         Task { @MainActor in
             coordinator?.handleClipFileReceived(annotationID: id, at: tmp)
         }
+    }
+
+    @MainActor
+    private func applyEndComment(payload: [String: Any]) {
+        let transcript = payload[MessageKey.transcript] as? String
+        guard let idString = payload[MessageKey.annotationID] as? String,
+              let id = UUID(uuidString: idString) else { return }
+        coordinator?.handleEndComment(annotationID: id, transcript: transcript)
     }
 }

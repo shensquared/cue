@@ -28,14 +28,22 @@ final class Transcriber {
         if #available(iOS 16, *) { request.addsPunctuation = true }
         request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
 
+        let lock = NSLock()
+        var resumed = false
+
         return try await withCheckedThrowingContinuation { cont in
             recognizer.recognitionTask(with: request) { result, error in
+                lock.lock()
+                defer { lock.unlock() }
+                guard !resumed else { return }
                 if let error {
+                    resumed = true
                     cont.resume(throwing: error)
                     return
                 }
                 guard let result, result.isFinal else { return }
                 let text = result.bestTranscription.formattedString
+                resumed = true
                 if text.isEmpty {
                     cont.resume(throwing: TranscribeError.empty)
                 } else {

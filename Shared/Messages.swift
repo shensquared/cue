@@ -5,6 +5,7 @@ enum MessageKey {
     static let timestamp = "timestamp"
     static let lectureID = "lectureID"
     static let annotationID = "annotationID"
+    static let transcript = "transcript"
     static let state = "state"
     static let error = "error"
 }

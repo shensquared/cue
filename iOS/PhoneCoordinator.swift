@@ -17,6 +17,7 @@ final class PhoneCoordinator: ObservableObject {
     private(set) lazy var wc: WCPhoneSession = WCPhoneSession(coordinator: self)
 
     private var activeSecurityScopedURL: URL?
+    private var pendingClips: [UUID: URL] = [:]
 
     static let resumeBackoff: TimeInterval = 3.0
 
@@ -95,18 +96,32 @@ final class PhoneCoordinator: ObservableObject {
         annotations.append(ann)
         store.save(lectureID: lectureID, annotations: annotations)
         pendingCommentTimestamp = nil
+        if let buffered = pendingClips.removeValue(forKey: annotationID) {
+            attachClip(annotationID: annotationID, lectureID: lectureID, src: buffered)
+        }
         resumeAfterComment(from: t)
     }
 
     func handleClipFileReceived(annotationID: UUID, at fileURL: URL) {
-        guard let lectureID else { return }
+        guard let lectureID else {
+            pendingClips[annotationID] = fileURL
+            return
+        }
+        if annotations.contains(where: { $0.id == annotationID }) {
+            attachClip(annotationID: annotationID, lectureID: lectureID, src: fileURL)
+        } else {
+            pendingClips[annotationID] = fileURL
+        }
+    }
+
+    private func attachClip(annotationID: UUID, lectureID: String, src: URL) {
         guard let idx = annotations.firstIndex(where: { $0.id == annotationID }) else { return }
         let dest = store.clipsDirectory(lectureID: lectureID)
             .appendingPathComponent("\(annotationID.uuidString).m4a")
         try? FileManager.default.createDirectory(at: dest.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? FileManager.default.removeItem(at: dest)
         do {
-            try FileManager.default.moveItem(at: fileURL, to: dest)
+            try FileManager.default.moveItem(at: src, to: dest)
             annotations[idx].commentAudioFile = dest.lastPathComponent
             store.save(lectureID: lectureID, annotations: annotations)
             Task { await autoTranscribe(annotationID: annotationID, fileURL: dest) }
