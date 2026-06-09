@@ -1,4 +1,4 @@
-# Commentator
+# Cue
 
 Personal iOS + watchOS app for timestamped voice comments on lecture recordings.
 See [`SPEC.md`](SPEC.md) for the full design and locked decisions.
@@ -21,15 +21,15 @@ project.yml     XcodeGen project definition
 
 ```
 xcodegen generate
-open Commentator.xcodeproj
+open Cue.xcodeproj
 ```
 
 Re-run `xcodegen generate` after adding or moving source files.
 
 ## Bundle identifiers
 
-- iOS app: `mit.shenshen.commentator`
-- Watch app: `mit.shenshen.commentator.watchkitapp`
+- iOS app: `mit.shenshen.cue`
+- Watch app: `mit.shenshen.cue.watchkitapp`
 
 Set your Apple Developer team in Xcode's "Signing & Capabilities" tab (or
 edit `DEVELOPMENT_TEAM` in `project.yml`) before building to device.

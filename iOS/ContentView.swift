@@ -32,7 +32,7 @@ struct ContentView: View {
                     Section("Error") { Text(err).foregroundStyle(.red) }
                 }
             }
-            .navigationTitle("Commentator")
+            .navigationTitle("Cue")
             .sheet(isPresented: $showPicker) {
                 LecturePicker { id, url in
                     coordinator.loadLecture(id: id, url: url)

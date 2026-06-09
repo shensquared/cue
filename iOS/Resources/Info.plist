@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Commentator</string>
+	<string>Cue</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,6 +37,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
-	<string>mit.shenshen.commentator.watchkitapp</string>
+	<string>mit.shenshen.cue.watchkitapp</string>
 </dict>
 </plist>

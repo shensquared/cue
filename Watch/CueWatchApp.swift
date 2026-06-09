@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct CommentatorWatchApp: App {
+struct CueWatchApp: App {
     @StateObject private var coordinator = WatchCoordinator()
 
     var body: some Scene {
